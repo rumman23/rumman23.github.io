@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="mobile-web-app-capable" content="yes">
+    <title></title>
+    <script src="jquery-3.4.1.min.js" ></script>
+    <style type="text/css">
+        html {font-size: 100%}
+        body {
+            position: relative;
+            background-color: #242424;
+            font-family: sans-serif;
+        }
+
+        div::-webkit-scrollbar
+        {
+            background-color: #242424;
+        }
+        div::-webkit-scrollbar-track {
+            background-color: #242424;
+        }
+        div::-webkit-scrollbar-thumb {
+            background-color: #5fcb98;
+            border-radius: .4rem;
+        }
+        img {height: 10rem}
+
+        .slide {width: 95%; overflow-x: scroll}
+
+
+        div#tabs {text-align: center}
+        div.head {
+            display: inline-block;
+            margin: 2rem;
+            width: 5rem;
+            height: 5rem;
+            line-height: 5rem;
+            border-radius: 3.1rem;
+            font-size: 3rem;
+            font-weight: bold;
+            border: .6rem solid #5fcb98;
+            color: #5fcb98;
+            background-color: transparent;
+        }
+        div.head.unavailable {
+            color: #747474;
+            border-color: #747474;
+        }
+        div#gallery {
+            display: flex;
+            flex-wrap: nowrap;
+            align-items: flex-end;
+        }
+        div#gallery .pic {
+            display: inline-block;
+            position: relative;
+            margin: .8rem;
+            border-radius: .8rem;
+            border: .4px solid white;
+            background-color: white;
+        }
+        div#gallery .unavailable span {
+            position: absolute;
+            display: inline-block;
+            right: .8rem;
+            bottom: .8rem;
+            width: 2rem;
+            height: 2rem;
+            line-height: 2rem;
+            font-weight: bold;
+            text-align: center;
+            border-radius: 1.6rem;
+            background-color: rgba(255,255,255,.8);
+            border: .4rem solid #5fcb98;
+            color: #5fcb98;
+        }
+        img.big {height: 40rem}
+        div#stars {
+            margin: .8rem;
+        }
+        div#stars div {
+            display: inline-block;
+            width: 1.6rem;
+            height: 1.6rem;
+            line-height: 1.6rem;
+            font-size: 1.3rem;
+            margin: .35rem;
+            border-radius: .9rem;
+            border: .15rem dotted #5fcb98;
+            text-align: center;
+            color: #5fcb98;
+        }
+
+        div#stars .unavailable {
+            border-color: #747474;
+            color: #747474;
+        }
+
+        div#routes {
+            display: flex;
+        }
+        div.route {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            margin: .4rem;
+            border-top-width: .4rem;
+            border-top-style: solid;
+            border-bottom-width: .8rem;
+            border-bottom-style: solid;
+        }
+        div.attempt {
+            display: flex;
+            flex-direction: column-reverse;
+            background-color: transparent;
+        }
+        div.bolt {
+            width: 2.4rem;
+            height: 2.4rem;
+            line-height: 2.4rem;
+            font-size: 1.2rem;
+            text-align: center;
+            margin: .3rem;
+            border-radius: 1.6rem;
+            border: .15rem dotted;
+        }
+        div.bolt.top {
+            font-size: 1.8rem;
+        }
+        div.bolt.unavailable {
+            font-size: 1.2rem;
+            color: #747474;
+            border-color: transparent;
+            background-color: transparent;
+        }
+        .route-red { border-color: #ff652f; }
+        .route-red .bolt { color: #ff652f; }
+        .route-white { border-color: #e8e8e8; }
+        .route-white .bolt { color: #e8e8e8; }
+        .route-blue { border-color: #374785; }
+        .route-blue .bolt { color: #374785; }
+        .route-yellow { border-color: #ffe400; }
+        .route-yellow .bolt { color: #ffe400; }
+
+    </style>
+    <script type="text/javascript" >
+        function toggleFullScreen() {
+            var doc = window.document;
+            var docEl = doc.documentElement;
+
+            var requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen;
+            var cancelFullScreen = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen;
+
+            if(!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement) {
+                requestFullScreen.call(docEl);
+            }
+            else {
+                cancelFullScreen.call(doc);
+            }
+        }
+
+        $(function(){
+            var boltCount = 3;
+            var imgs = [
+                {stars: 12, path:'0240-hu.webp' },
+                {stars: 16, path:'0263a-hu.webp' },
+                {stars: 16, path:'0263b-hu.webp' },
+                {stars: 16, path:'0263-hu.webp' },
+                {stars: 8, path:'0266-hu.webp' },
+                {stars: 12, path:'0285b-hu.webp' },
+                {stars: 12, path:'0285c-hu.webp' },
+                {stars: 12, path:'0285-hu.webp' },
+                {stars: 12, path:'0288-hu.webp' },
+                {stars: 14, path:'0320-hu.webp' },
+                {stars: 18, path:'0339b-ma.jpeg' },
+                {stars: 18, path:'0339-ma.jpeg' },
+                {stars: 14, path:'0349-hu.webp' },
+                {stars: 14, path:'0359-ma.jpeg' },
+                {stars: 14, path:'0380-hu.webp' },
+                {stars: 14, path:'0389-ma.jpeg' },
+                {stars: 20, path:'0408-hu.webp' },
+                {stars: 24, path:'0409-ma.jpeg' },
+                {stars: 24, path:'0419-ha.jpg' },
+                {stars: 24, path:'0429-ha.jpg' },
+                {stars: 30, path:'1449-ha.jpg' },
+            ].sort((a,b) => a.stars - b.stars), max = imgs[imgs.length-1].stars;
+            var defaultState = {
+                routes: [
+                    {id: 1, color:"red"},
+                    {id: 2, color:"white"},
+                    {id: 3, color:"blue"},
+                    {id: 4, color:"red"},
+                    {id: 5, color:"yellow"},
+                    {id: 6, color:"blue"},
+                ],
+                climbers: [
+                    {name: 'Š', bonus:1, attempts: []},
+                    {name: 'J', bonus: 4/3, attempts: []},
+                ],
+                climberIdx: 0,
+            };
+
+            var state = JSON.parse(localStorage.getItem('state')) || defaultState;
+
+            function reducer(action, state) {
+                switch (action.type) {
+                    case 'tab':
+                        state.climberIdx = action.climberIdx;
+                        break;
+                    case 'updateAttempt':
+                        var attempts = state.climbers[action.climberIdx].attempts,
+                            attempt = attempts.find(v => v.id == action.attempt.id)
+                        if (attempt) {
+                            if (attempt.boltCount == 1 && action.boltIdx == 0) {
+                                attempts.splice(attempts.indexOf(attempt), 1);
+                            } else {
+                                attempt.boltCount = action.boltIdx + 1;
+                            }
+                        }
+                        break;
+                    case 'addAttempt':
+                        state.climbers[action.climberIdx].attempts.push(Object.assign({}, action.attempt, {
+                            boltCount: action.boltIdx +1,
+                            id: state.climbers.reduce((acc, c) => acc + c.attempts.length, 1 )
+                        }))
+                }
+                return state;
+            }
+
+            function el(tag, children, attrs) {
+                var element = $(tag);
+                (children || []).forEach(function(v) {element.append(v)});
+                (attrs || []).forEach(function(v) {element.attr(v.name,v.value)});
+                return element;
+            }
+
+            function render(state)
+            {
+                var climber = state.climbers[state.climberIdx],
+                    topAttemptsByRoute = climber.attempts.reduce((acc,v) => {
+                        var max = acc[v.routeId] && acc[v.routeId].boltCount || null;
+                        if ( (!max && v.boltCount) || (max < v.boltCount)) {
+                            acc[v.routeId] = v;
+                        }
+                        return acc;
+                    }, {} ),
+                    topAttempts = Object.keys(topAttemptsByRoute).reduce((acc,k) => {
+                        acc[topAttemptsByRoute[k].id]=topAttemptsByRoute[k];
+                        return acc;
+                    }, {}),
+                    stars = Math.floor(climber.bonus * climber.attempts.reduce((acc,v) => acc + (topAttempts[v.id]?2:1)*v.boltCount, 0 ));
+
+                return el('<div/>', [
+                    el('<div id=tabs />', state.climbers.map(function(climber, i) {
+                        return el('<div class="head ' + (i != state.climberIdx ? ' unavailable' : '')+ '"/>', [climber.name], [{name: 'data-climber-idx', value: i}]);
+                    })),
+                    el('<div id=results />', [
+                        el('<div class="slide well"/>', [ el('<div id=gallery />', imgs.map(function(img){
+                            var gotIt = stars >= img.stars;
+                            return el('<div class="pic' + (gotIt ? '' : ' unavailable') + '"/>' ,
+                                [ el('<img />', [], [{name:'src',value:img.path}]) , '<span>'+(gotIt ? '' : img.stars - stars)+'</span>']
+                            )
+                        }))]),
+                        el('<div id=stars />', [...Array(max).keys()].map(function(v) {
+                            return el((v+1)>stars?'<div class="unavailable" >&starf;</div>':'<div >&starf;</div>')
+                        })),
+                        el('<div class=slide/>', [el('<div id=routes />', state.routes.map(function(route){
+                            var attempts = climber.attempts.filter(function(attempt){return route.id == attempt.routeId});
+                            attempts.push({routeId:route.id, boltCount:0})
+                            return el('<div class="route route-' + route.color + '" />', attempts.map((attempt) => {
+                                return el('<div class=attempt />', Array.from({length: boltCount}).map((_, i) => {
+                                    var climbed = i<attempt.boltCount
+                                    return el('<div class="bolt'+(climbed?'':' unavailable')+(topAttempts[attempt.id]?' top':'')+'" >&starf;</div>', [], [
+                                            {name: 'data-climber-idx', value: state.climberIdx},
+                                            {name: 'data-id', value:attempt.id},
+                                            {name: 'data-bolt-idx', value: i},
+                                            {name: 'data-route-id', value:attempt.routeId},
+                                            {name: 'data-bolt-count', value: attempt.boltCount}
+                                        ]);
+                                }))
+                            }))
+                        }))])
+                    ])
+                ])
+            }
+
+            function update(action) {
+                console.log(state, action, '=>');
+                state = reducer(action, state);
+                console.log(state);
+                localStorage.setItem('state', JSON.stringify(state));
+                var dom = render(state);
+                $('#root').html('');
+                $('#root').append(dom);
+            }
+
+            $( "#root" ).on( "click", "div.head", function(e) {
+                var $el = $(e.target);
+                update({type:'tab',climberIdx: $el.data('climberIdx')})
+            });
+
+            $( "#root" ).on( "click", "div.bolt", function(e) {
+                var $el = $(e.target),
+                    {climberIdx, boltIdx, ...attempt} = $el.data();
+                if (attempt.id) {
+                    update({type: 'updateAttempt', climberIdx, boltIdx, attempt})
+                } else {
+                    update({type: 'addAttempt', climberIdx, boltIdx, attempt})
+                }
+            });
+
+            $( "#root" ).on( "click", "img", function(e) {
+                var $el = $(e.target);
+                if (!$el.hasClass('big')) {
+                    $('img').removeClass('big');
+                }
+                $el.toggleClass('big');
+            });
+
+
+
+            update({});
+            $('#fs').click(toggleFullScreen);
+
+        })
+    </script>
+</head>
+<body>
+<div id="root"></div>
+<div id="fs" style="margin-top:2rem; width:90%;height:10rem;"></div>
+</body>
+</html>
