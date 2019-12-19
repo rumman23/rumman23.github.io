@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>player</title>
+    <script src="jquery-3.4.1.min.js"></script>
+    <style type="text/css">
+        button {font-size: x-large}
+
+
+    </style>
+</head>
+<body>
+    <div style="font-size: xx-large">
+        <button id="glob-stop" style="color: #ff652f">stop</button> |
+        hlasitost <input id="glob-vol" type="range" step="0.1" value="1" min="0" max="1">
+    </div>
+    <hr>
+    <hr>
+    <div>trubka  </div>
+    <audio id="trumpet-audio" controls>
+        <source src="media/1-fanfare.mp3">
+        <p>no audio</p>
+    </audio>
+    <hr>
+    <div>bus
+        <button id="bus-entry">příjezd</button>
+        <button id="bus">start</button>
+        <button id="break">brzda</button>
+    </div>
+    <audio  id="engine-audio" controls>
+        <source src="media/bus-run-long.mp3">
+        <p>no audio</p>
+    </audio>
+    <div>brzdy</div>
+    <audio id="break-audio" controls>
+        <source src="media/bus-breaks.mp3">
+        <p>no audio</p>
+    </audio>
+    <hr>
+    <div>moře</div>
+    <audio id="sea-audio" controls >
+        <source src="media/4-sea.mp3">
+        <p>no audio</p>
+    </audio>
+    <script type="text/javascript">
+    $(function(){
+
+        document.getElementById('sea-audio').volume = 0.2;
+        var engine = document.getElementById('engine-audio');
+        var breaks = document.getElementById('break-audio');
+        var $bus = $('#bus');
+        var $break = $('#break');
+        var running = 0;
+        $('#bus-entry').click(function(){
+            engine.volume = 0.2;
+            $(engine).animate({volume: 1},10*1000);
+            startEngine();
+        });
+        function stopEngine() {
+            engine.pause();
+            engine.currentTime = 0;
+            $bus.html('start');
+            running = 0;
+        }
+        function startEngine() {
+            engine.currentTime = 0;
+            engine.play();
+            $bus.html('stop');
+            running = 1;
+        }
+        $bus.click(function(){
+           engine.volume = 1;
+           if (running) {
+               stopEngine();
+           } else {
+               startEngine();
+           }
+        });
+        $break.click(function(){
+           if (running) {
+               $(engine).animate({volume: 0},300, function(){
+                   stopEngine();
+               });
+               breaks.volume = 1;
+               breaks.currentTime = 0;
+               breaks.play();
+           }
+        });
+        $(engine).bind('ended', function(){
+            $bus.html('start');
+            running = 0;
+        });
+        $('#glob-stop').click(function () {
+            $('audio').trigger('pause');
+        })
+        $('#glob-vol').click(function () {
+            $('audio').animate({volume: this.value}, 500);
+        })
+    })
+    </script>
+</body>
+</html>
