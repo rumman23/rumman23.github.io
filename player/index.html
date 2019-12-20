@@ -19,8 +19,7 @@
     <hr>
     <div>trubka  </div>
     <audio id="trumpet-audio" controls>
-        <source src="media/1-fanfare.mp3">
-        <p>no audio</p>
+        <source src="media/f-new-world.mp3">
     </audio>
     <hr>
     <div>bus
@@ -43,6 +42,55 @@
         <source src="media/4-sea.mp3">
         <p>no audio</p>
     </audio>
+    <hr>
+    <hr>
+
+    <div>silent-night</div>
+    <audio controls>
+        <source src="media/f-silent-night.mp3">
+    </audio>
+    <hr>
+    <div>zarathustra</div>
+    <audio controls>
+        <source src="media/f-zarathustra.mp3">
+    </audio>
+    <hr>
+    <div>star-wars</div>
+    <audio controls>
+        <source src="media/f-star-wars.mp3">
+    </audio>
+    <hr>
+    <div>imperial-march</div>
+    <audio controls>
+        <source src="media/f-imperial-march.mp3">
+    </audio>
+    <hr>
+    <div>valkyries</div>
+    <audio controls>
+        <source src="media/f-valkyries.mp3">
+    </audio>
+    <hr>
+    <div>pink-panther</div>
+    <audio controls>
+        <source src="media/f-pink-panther.mp3">
+    </audio>
+    <hr>
+    <div>007-a</div>
+    <audio controls>
+        <source src="media/f-007-a.mp3">
+    </audio>
+    <hr>
+    <div>007-b</div>
+    <audio controls>
+        <source src="media/f-007-b.mp3.mp3">
+    </audio>
+    <hr>
+    <div>007-b-long</div>
+    <audio controls>
+        <source src="media/f-007-b-long.mp3">
+    </audio>
+    <hr>
+
     <script type="text/javascript">
     $(function(){
         if ("serviceWorker" in navigator) {
@@ -67,9 +115,15 @@
         var $break = $('#break');
         var running = 0;
         $('#bus-entry').click(function(){
-            engine.volume = 0.2;
-            $(engine).animate({volume: 1},10*1000);
+            engine.volume = 0;
             startEngine();
+            function fadeIn () {
+                if(running && engine.volume < 1) {
+                    engine.volume = Math.min(1, engine.volume + .05);
+                    setTimeout(fadeIn, 600);
+                }
+            }
+            fadeIn();
         });
         function stopEngine() {
             engine.pause();
@@ -93,9 +147,9 @@
         });
         $break.click(function(){
            if (running) {
-               $(engine).animate({volume: 0},300, function(){
+               setTimeout(function(){
                    stopEngine();
-               });
+               }, 300);
                breaks.volume = 1;
                breaks.currentTime = 0;
                breaks.play();
@@ -107,10 +161,10 @@
         });
         $('#glob-stop').click(function () {
             $('audio').trigger('pause');
-        })
-        $('#glob-vol').click(function () {
-            $('audio').animate({volume: this.value}, 500);
-        })
+        });
+        $('#glob-vol').change(function () {
+            $('audio').prop('volume', this.value);
+        });
     })
     </script>
 </body>
