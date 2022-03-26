@@ -13,11 +13,11 @@
 <script src="data.js"></script>
 <script type="text/babel" >
 
-    let Pause = () => <p className="visually-hidden"> . . . . . . . . . . . </p>
+    let Pause = () => <p className="visually-hidden"><br/><br/><br/></p>
 
     let AnswerNum = ({n}) => {
-        let m = {a: 'za á', b: 'za bé', c: 'za cé'}
-        return <strong>{m[n]})</strong>
+        let m = {a: 'za á. ', b: 'za bé. ', c: 'za c. '}
+        return <strong>{m[n]}</strong>
     }
     let Question = ({question, userAnswer, showHelp, onAnswer}) => {
         if (userAnswer) {
