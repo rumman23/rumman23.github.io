@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Zlatá udice</title>
+    <link rel="stylesheet" href="bootstrap.min.css">
+</head>
+<body>
+<div id="root"></div>
+<script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+<script crossorigin src="https://unpkg.com/react@17/umd/react.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js"></script>
+<script src="data.js"></script>
+<script type="text/babel" >
+
+
+    let Question = ({question, userAnswer, showHelp, onAnswer}) => {
+        if (userAnswer) {
+            showHelp = false;
+        }
+        return (
+            <div><div className="card">
+                <br/>
+                <h4>{question.number}.) {question.title}</h4>
+                <br/>
+                <ul className="list-group">
+                    {question.answers.map(
+                        (answer) => {
+                            let cl = "list-group-item list-group-item-action ";
+                            if (userAnswer == answer.number && answer.correct) {
+                                cl += 'list-group-item list-group-item-success'
+                            } else if (userAnswer == answer.number && !answer.correct) {
+                                cl += 'list-group-item list-group-item-danger'
+                            } else if (showHelp && answer.correct) {
+                                cl += 'list-group-item list-group-item-info'
+                            }
+                            return <li className={cl} onClick={onAnswer}>
+                                <strong>{answer.number}</strong>) {answer.title}</li>
+                        }
+                    )}
+                </ul>
+            </div>
+            <br/>
+            </div>
+        )
+    }
+    let Qaq = ({question}) => {
+        let correct = question.answers.find((a) => a.correct)
+        return (
+            <div><div className="card">
+                <br/>
+                <h4>{question.number}.) {question.title}</h4>
+                <br/>
+                <p>
+                    <strong>{correct.number}</strong>) {correct.title}
+                </p>
+            </div>
+            <br/>
+            </div>
+        )
+    }
+
+    let Category = ({section, ...other}) => {
+        return (
+            <div>
+                <h3>{ section.title }</h3>
+                {section.questions.map(
+                    (question) => <Question question={question} {...other} />
+                )}
+            </div>
+        )
+    }
+
+    let Menu = ({onModeChange}) => {
+        return <div className="p-5 mb-4 bg-light rounded-3">
+            <h1>Zlatá udice</h1>
+
+            <nav className="navbar navbar-expand-lg navbar-light bg-light">
+                <ul className="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li className="nav-item">
+                        <a className="nav-link" href="#" onClick={()=>onModeChange('qa')}>příprava</a>
+                    </li>
+                    <li className="nav-item">
+                        <a className="nav-link" href="#" onClick={()=>onModeChange('test')}>otázky</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    }
+
+
+    let Questions = ({categories, showHelp, onShowHelpChange, ...other}) => {
+        return <div className="container-fluid">
+            <div className="card p-4 sticky-top ">
+                <div className="form-check form-switch">
+                    <input type="checkbox" checked={showHelp} onChange={onShowHelpChange} className="form-check-input" role="switch" id="flexSwitchCheckDefault" />
+                    <label className="form-check-label" htmlFor="flexSwitchCheckDefault">nápověda</label>
+                </div>
+            </div>
+            <h2>Otázky</h2>
+            {categories.map(
+                (question) => <Category section={question} showHelp={showHelp} {...other}/>
+            )}
+        </div>
+    }
+
+    let Nav = ({onBack, children}) => {
+        return <div>
+            <nav className="navbar navbar-expand-lg navbar-light bg-light">
+                <ul className="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li className="nav-item">
+                        <a className="nav-link" href="#" onClick={onBack} >zpět</a>
+                    </li>
+                </ul>
+            </nav>
+            {children}
+        </div>
+    }
+
+    let Qa = ({categories, ...other}) => {
+        return <div className="container-fluid">
+            <h2>Otázky</h2>
+            {categories.map(
+                (c) => (<div>
+                    <h3>{ c.title }</h3>
+                    {c.questions.map(
+                        (question) => <Qaq question={question} {...other} />
+                    )}
+                </div>)
+            )}
+        </div>
+    }
+
+    class App extends React.Component {
+        state = {
+            mode: 'menu',
+            showHelp: false,
+            answers: []
+        }
+        render() {
+            let onModeChange = (mode) => this.setState({mode: mode})
+            let onBack = () => onModeChange('menu')
+
+            switch (this.state.mode) {
+                case 'menu':
+                    return <Menu onModeChange={onModeChange} />
+                case 'test':
+                    return <Nav onBack={onBack}><Questions
+                        categories={this.props.categories}
+                        answers={this.state.answers}
+                        showHelp={this.state.showHelp}
+                        onShowHelpChange={(e)=>this.setState({showHelp: e.target.checked})}
+                    /></Nav>
+                case 'qa':
+                    return <Nav onBack={onBack}><Qa
+                        categories={this.props.categories}
+                    /></Nav>
+            }
+        }
+    }
+
+    ReactDOM.render(<App categories={data} /> , document.getElementById('root'))
+</script>
+</body>
+</html>
