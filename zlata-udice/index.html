@@ -13,16 +13,25 @@
 <script src="data.js"></script>
 <script type="text/babel" >
 
+    let Pause = () => <p className="visually-hidden"> . . . . . . . . . . . </p>
 
+    let AnswerNum = ({n}) => {
+        let m = {a: 'za á', b: 'za bé', c: 'za cé'}
+        return <strong>{m[n]})</strong>
+    }
     let Question = ({question, userAnswer, showHelp, onAnswer}) => {
         if (userAnswer) {
             showHelp = false;
         }
+        let correct = question.answers.find((a) => a.correct)
+
+        let solution = showHelp ? <p>Správně je <AnswerNum n={correct.number} />  {correct.title}<Pause /></p> : null
+
         return (
             <div><div className="card">
-                <br/>
+                <br/><Pause /><Pause />
                 <h4>{question.number}.) {question.title}</h4>
-                <br/>
+                <br/><Pause /><Pause />
                 <ul className="list-group">
                     {question.answers.map(
                         (answer) => {
@@ -35,12 +44,14 @@
                                 cl += 'list-group-item list-group-item-info'
                             }
                             return <li className={cl} onClick={onAnswer}>
-                                <strong>{answer.number}</strong>) {answer.title}</li>
+                                <AnswerNum n={answer.number} /> {answer.title}
+                            </li>
                         }
                     )}
                 </ul>
+                {solution}
             </div>
-            <br/>
+            <br/><Pause /><Pause />
             </div>
         )
     }
@@ -48,14 +59,14 @@
         let correct = question.answers.find((a) => a.correct)
         return (
             <div><div className="card">
-                <br/>
+                <br/><Pause /><Pause />
                 <h4>{question.number}.) {question.title}</h4>
-                <br/>
+                <br/><Pause /><Pause />
                 <p>
-                    <strong>{correct.number}</strong>) {correct.title}
+                    <AnswerNum n={correct.number} />  {correct.title}
                 </p>
             </div>
-            <br/>
+            <br/><Pause /><Pause />
             </div>
         )
     }
