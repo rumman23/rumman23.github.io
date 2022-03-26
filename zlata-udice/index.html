@@ -17,7 +17,7 @@
 
     let AnswerNum = ({n}) => {
         let m = {a: 'za A. ', b: 'za bé. ', c: 'za c. '}
-        return <strong ariaLabel={m[n]}>{n}) </strong>
+        return <strong>{m[n]} </strong>
     }
     let Question = ({question, userAnswer, showHelp, onAnswer}) => {
         if (userAnswer) {
